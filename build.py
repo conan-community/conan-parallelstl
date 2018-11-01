@@ -15,4 +15,10 @@ if __name__ == "__main__":
         builder.add(settings={"compiler":"gcc", "compiler.version": "7",
                               "arch": "x86_64", "build_type": "Release"},
                     options={}, env_vars={}, build_requires={})
+    elif platform.system() == "Darwin":
+        builder.add(settings={"compiler":"apple-clang", "compiler.version": "9.1",
+                              "arch": "x86_64", "build_type": "Release"},
+                    options={}, env_vars={}, build_requires={})
+    else:
+        builder.add(settings={}, options={}, env_vars={}, build_requires={})
     builder.run()

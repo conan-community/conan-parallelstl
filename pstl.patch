@@ -1,0 +1,24 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 75d15ec..c5840dd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -68,3 +68,19 @@ configure_file(
+ 
+ export(TARGETS ParallelSTL NAMESPACE pstl:: FILE ParallelSTLTargets.cmake)
+ export(PACKAGE ParallelSTL)
++
++install(TARGETS ParallelSTL EXPORT ParallelSTLConfig)
++
++install(DIRECTORY include/
++    DESTINATION include
++    USE_SOURCE_PERMISSIONS)
++
++install(FILES "${CMAKE_CURRENT_BINARY_DIR}/ParallelSTLConfigVersion.cmake"
++    DESTINATION lib/cmake/ParallelSTL
++    PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
++
++install(EXPORT ParallelSTLConfig
++    FILE ParallelSTLConfig.cmake
++    NAMESPACE pstl::
++    DESTINATION lib/cmake/ParallelSTL
++    PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)

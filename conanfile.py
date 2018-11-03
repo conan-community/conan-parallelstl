@@ -6,7 +6,7 @@ from conans import ConanFile, tools, CMake
 
 
 class PSTLConan(ConanFile):
-    name = "ParallelSTL"
+    name = "parallelstl"
     version = "20181004"
     author = "Conan Community"
     description = "C++ standard library algorithms with support for execution policies"
@@ -24,11 +24,11 @@ class PSTLConan(ConanFile):
 
     def source(self):
         tools.get("%s/archive/%s.tar.gz" % (self.homepage, self.version))
-        os.rename("%s-%s" % (self.name.lower(), self.version), self._source_subfolder)        
+        os.rename("%s-%s" % (self.name, self.version), self._source_subfolder)
 
     def requirements(self):
         if self.options.parallel_policies and self.options.backend == "tbb":
-            self.requires("TBB/2018_U5@conan/stable")
+            self.requires("TBB/2019_U1@conan/stable")
 
     def package(self):
         tools.patch(base_path=self._source_subfolder, patch_file="pstl.patch")

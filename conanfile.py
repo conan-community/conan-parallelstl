@@ -38,6 +38,10 @@ class PSTLConan(ConanFile):
         cmake.definitions["PARALLELSTL_BACKEND"] = self.options.backend
         cmake.configure()
         cmake.install()
+        # write_basic_package_version_file is not portable on Windows
+        tools.replace_in_file(file_path=os.path.join(self.package_folder, "lib", "cmake", "ParallelSTL", "ParallelSTLConfigVersion.cmake"),
+                              search="# check that the installed version has the same 32/64bit-ness as the one which is currently searching:",
+                              replace="return()")
   
     def package_id(self):
         self.info.header_only()

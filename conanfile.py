@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from conans import ConanFile, tools, CMake
+from conans import ConanFile, tools
 
 
 class PSTLConan(ConanFile):
@@ -15,11 +15,9 @@ class PSTLConan(ConanFile):
     topics = ("conan", "parallelstl", "stl", "algorithms", "parallel")
     license = "Apache-2.0"
     exports = "LICENSE"
-    exports_sources = ("CMakeLists.txt", "pstl.patch")
-    generators = ("cmake", "cmake_find_package")
     no_copy_sources = True
-    options = {"parallel_policies": [True, False], "backend": "ANY"}
-    default_options = {"parallel_policies": True, "backend": "tbb"}
+    options = {"backend": ["tbb", False]}
+    default_options = {"backend": "tbb"}
     _source_subfolder = "source_subfolder"
 
     def source(self):
@@ -27,25 +25,16 @@ class PSTLConan(ConanFile):
         os.rename("%s-%s" % (self.name, self.version), self._source_subfolder)
 
     def requirements(self):
-        if self.options.parallel_policies and self.options.backend == "tbb":
+        if self.options.backend == "tbb":
             self.requires("TBB/2019_U1@conan/stable")
 
     def package(self):
-        tools.patch(base_path=self._source_subfolder, patch_file="pstl.patch")
-        self.copy("LICENSE", dst="licenses", src=self._source_subfolder)
-        cmake = CMake(self)
-        cmake.definitions["PARALLELSTL_USE_PARALLEL_POLICIES"] = self.options.parallel_policies
-        cmake.definitions["PARALLELSTL_BACKEND"] = self.options.backend
-        cmake.configure()
-        cmake.install()
-        # write_basic_package_version_file is not portable on Windows
-        tools.replace_in_file(file_path=os.path.join(self.package_folder, "lib", "cmake", "ParallelSTL", "ParallelSTLConfigVersion.cmake"),
-                              search="# check that the installed version has the same 32/64bit-ness as the one which is currently searching:",
-                              replace="return()")
+        self.copy(pattern="LICENSE", dst="licenses", src=self._source_subfolder)
+        self.copy(pattern="*", dst="include", src=os.path.join(self._source_subfolder, "include"))
   
     def package_id(self):
         self.info.header_only()
 
     def package_info(self):
-        if self.options.parallel_policies and self.options.backend == "tbb":
+        if self.options.backend == "tbb":
             self.cpp_info.defines.append("__PSTL_USE_TBB")

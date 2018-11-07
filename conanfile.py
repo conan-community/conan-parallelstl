@@ -16,8 +16,8 @@ class PSTLConan(ConanFile):
     license = "Apache-2.0"
     exports = "LICENSE"
     no_copy_sources = True
-    options = {"parallel_policies": [True, False]}
-    default_options = {"parallel_policies": True}
+    options = {"backend": ["tbb", False]}
+    default_options = {"backend": "tbb"}
     _source_subfolder = "source_subfolder"
 
     def source(self):
@@ -25,7 +25,7 @@ class PSTLConan(ConanFile):
         os.rename("%s-%s" % (self.name, self.version), self._source_subfolder)
 
     def requirements(self):
-        if self.options.parallel_policies:
+        if self.options.backend == "tbb":
             self.requires("TBB/2019_U1@conan/stable")
 
     def package(self):
@@ -36,5 +36,5 @@ class PSTLConan(ConanFile):
         self.info.header_only()
 
     def package_info(self):
-        if self.options.parallel_policies:
+        if self.options.backend == "tbb":
             self.cpp_info.defines.append("__PSTL_USE_TBB")
